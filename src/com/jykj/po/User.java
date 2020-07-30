@@ -3,7 +3,7 @@ package com.jykj.po;
 public class User {
 	private Integer id;
 	private Integer gender;
-	private String name;
+	private String name; // 姓名
 	public Integer getId() {
 		return id;
 	}
