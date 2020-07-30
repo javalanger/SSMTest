@@ -2,8 +2,8 @@ package com.jykj.po;
 // 用户信息
 public class User {
 	private Integer id;
-	private Integer gender;
-	private String name;
+	private Integer gender; // 性别
+	private String name; // 姓名
 	public Integer getId() {
 		return id;
 	}
