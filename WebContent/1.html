@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+	<input type="button" value="获取用户信息" id="getUserInfo"><br>
+	<input type="button" value="获取网盘容量" id="getDiscQuota"><br>
+	<input type="button" value="获取网盘文件列表" id="getFileList"><br>
+	<input type="button" value="复制文件" id="copyfile"><br>
+	<input type="button" value="删除文件" id="delfile"><br>
+	<input type="button" value="重命名" id="rename"><br>
+	<input type="button" value="移动" id="move"><br>
+	<input type="button" value="获取文件信息" id="getfileinfo"><br>
+</body>
+<script type="text/javascript">
+	var TOKEN = null;
+
+	function getUrlParam(name) {
+	    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+	    // console.log(reg);
+	    var r = window.location.search.substr(1).match(reg);
+	    // console.log(r);
+	    if (r != null) return decodeURI(r[2]);
+	    return null;  
+	}
+	var code = getUrlParam("code");
+	
+	if(code) {
+		var url="https://openapi.baidu.com/oauth/2.0/token?grant_type=authorization_code&code="+code+"&client_id=HVNaYWUIqfNsRGA7gy2yUuId&client_secret=ECGUkEA1qkW47IPHIHf1IDsWUGWTx3Ax&redirect_uri=http://192.168.224.1/1.html";
+		$.ajax({
+			url:"/baidu/getMsg",
+			data : {
+				path : url
+			},
+			type:'get',
+			success:function(res){
+				// console.log(res);
+				var data = JSON.parse(res);
+				TOKEN = data.access_token;
+			}
+		})
+		// window.location.href = url;
+	} else {
+		window.location.href = "https://openapi.baidu.com/oauth/2.0/authorize?response_type=code&client_id=HVNaYWUIqfNsRGA7gy2yUuId&redirect_uri=http://192.168.224.1/1.html&scope=basic,netdisk&display=popup&qrcode=1";
+	}
+	
+	// 获取网盘用户信息
+	$("#getUserInfo").click(function(){
+		var url = "https://pan.baidu.com/rest/2.0/xpan/nas?method=uinfo&access_token="+TOKEN;
+		$.ajax({
+			url:"/baidu/getMsg",
+			data : {
+				path : url
+			},
+			type:'get',
+			success:function(res){
+				console.log(res);
+			}
+		})
+	});
+	// 获取网盘容量
+	$("#getDiscQuota").click(function(){
+		var url = "https://pan.baidu.com/api/quota?access_token="+TOKEN;
+		$.ajax({
+			url:"/baidu/getMsg",
+			data : {
+				path : url
+			},
+			type:'get',
+			success:function(res){
+				console.log(res);
+			}
+		})
+	});
+	
+	// 获取网盘文件列表
+	$("#getFileList").click(function(){
+		var url = "https://pan.baidu.com/rest/2.0/xpan/file?method=search&key=2&dir=/test&access_token="+TOKEN;
+		$.ajax({
+			url:"/baidu/getMsg",
+			data : {
+				path : url
+			},
+			type:'get',
+			success:function(res){
+				console.log(res);
+			}
+		})
+	});
+	// 复制文件
+	$("#copyfile").click(function(){
+		var url = "https://pan.baidu.com/rest/2.0/xpan/file?method=filemanager&opera=copy&access_token="+TOKEN;
+		var fileList = [{path : "/1_1.txt", dest : "/test" , ondup :"fail"}];
+		var data = 'async=1&filelist='+JSON.stringify(fileList);
+		$.ajax({
+			url:"/baidu/dosom",
+			data : {
+				path : url,
+				data : data
+			},
+			type:'post',
+			success:function(res){
+				console.log(res);
+			}
+		})
+	});
+	// 删除文件
+	$("#delfile").click(function(){
+		var url = "https://pan.baidu.com/rest/2.0/xpan/file?method=filemanager&opera=delete&access_token="+TOKEN;
+		var fileList = ["/test/1_1.txt"];
+		var data = 'async=1&filelist='+JSON.stringify(fileList);
+		$.ajax({
+			url:"/baidu/dosom",
+			data : {
+				path : url,
+				data : data
+			},
+			type:'post',
+			success:function(res){
+				console.log(res);
+			}
+		})
+	});
+	
+	// 重命名文件
+	$("#rename").click(function(){
+		var url = "https://pan.baidu.com/rest/2.0/xpan/file?method=filemanager&opera=rename&access_token="+TOKEN;
+		var fileList = [{path : "/1.txt", newname : "1_1.txt"}];
+		var data = 'async=1&filelist='+JSON.stringify(fileList);
+		$.ajax({
+			url:"/baidu/dosom",
+			data : {
+				path : url,
+				data : data
+			},
+			type:'post',
+			success:function(res){
+				console.log(res);
+			}
+		})
+	});
+	
+	// 移动文件
+	$("#move").click(function(){
+		var url = "https://pan.baidu.com/rest/2.0/xpan/file?method=filemanager&opera=move&access_token="+TOKEN;
+		var fileList = [{path : "/1_1.txt", dest : "/test"}];
+		var data = 'async=1&filelist='+JSON.stringify(fileList);
+		$.ajax({
+			url:"/baidu/dosom",
+			data : {
+				path : url,
+				data : data
+			},
+			type:'post',
+			success:function(res){
+				console.log(res);
+			}
+		})
+	});
+	
+	// fs_id:496073544912397  uk: 3721089537
+	// https://pan.baidu.com/rest/2.0/xpan/multimedia?method=filemetas&access_token=123&path=/<share>123-456&fsids=[111,222]&thumb=1&dlink=1&extra=1
+			// https://d.pcs.baidu.com/file/e25a75c5b2d38108ab68f82c1410fd94?fid=3721089537-250528-496073544912397&rt=pr&sign=FDtAERV-DCb740ccc5511e5e8fedcff06b081203-kdlAouTT1qyeiJS%2FZn2iLi0kp1s%3D&expires=8h&chkbd=0&chkv=2&dp-logid=3705590093494125267&dp-callid=0&dstime=1561042911&r=602639206
+	// 获取文件信息
+	$("#getfileinfo").click(function(){
+		var url = "https://pan.baidu.com/rest/2.0/xpan/multimedia?method=filemetas&fsids=[496073544912397]&thumb=1&dlink=1&extra=1&access_token="+TOKEN;
+		$.ajax({
+			url:"/baidu/getMsg",
+			data : {
+				path : url
+			},
+			type:'get',
+			success:function(res){
+				console.log(res);
+			}
+		})
+	});
+</script>
+</html>
