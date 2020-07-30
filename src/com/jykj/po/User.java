@@ -1,5 +1,5 @@
 package com.jykj.po;
-
+// 用户信息
 public class User {
 	private Integer id;
 	private Integer gender;
