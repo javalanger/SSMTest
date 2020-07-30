@@ -2,7 +2,7 @@ package com.jykj.po;
 // 用户信息
 public class User {
 	private Integer id; // id
-	private Integer gender; // 性别
+	private Integer gender; // 用户性别
 	private String name; // 用户姓名
 	public Integer getId() {
 		return id;
