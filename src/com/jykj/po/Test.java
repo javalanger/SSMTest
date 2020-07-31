@@ -1,7 +1,9 @@
 package com.jykj.po;
 
 public class Test {
-  private Integer id; //用id
-  private String name;//用户姓名
+
+  private Integer id; //用户id
+  private String name;//姓名
+
   
 }
