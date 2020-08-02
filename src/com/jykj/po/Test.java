@@ -5,4 +5,6 @@ public class Test {
   private Integer id; //id
   private String name;//name
   
+  private int age;
+  
 }
